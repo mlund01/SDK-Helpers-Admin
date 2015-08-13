@@ -6,7 +6,8 @@ angular.module( 'orderCloud', [
 	'ngTouch',
 	'ui.router',
 	'ui.bootstrap',
-	'orderCloud.sdk'
+	'orderCloud.sdk',
+	'orderCloud.productList'
 ])
 
 	.run( Security )
@@ -19,11 +20,11 @@ angular.module( 'orderCloud', [
 	.constant('appname', 'OrderCloud AngularJS Seed')
 
 	//Client ID for a Registered Distributor or Buyer Company
-	.constant('clientid', 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx')
+	.constant('clientid', 'd83b216c-3561-4bca-98fc-92cc62da478d')
 
 	//Test Environment
 	.constant('authurl', 'https://testauth.ordercloud.io/oauth/token')
-	.constant('apiurl', 'https://testapi.ordercloud.io/v1')
+	.constant('apiurl', 'https://testapi.ordercloud.io')
 ;
 
 function Security( $rootScope, $state, Auth ) {
