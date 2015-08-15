@@ -1,7 +1,7 @@
 angular.module('orderCloud.productList')
     .controller('prodListCtrl', ProductListController);
 
-function ProductListController(Categories, Products) {
+function ProductListController(Categories, Products, UserGroups, Users) {
     var vm = this;
     vm.buyerID = 'nghelper1';
     vm.categoryID = 'Cat1';
@@ -9,6 +9,10 @@ function ProductListController(Categories, Products) {
     vm.deleteProduct = deleteProduct;
     vm.modifyProduct = modifyProduct;
     vm.addProduct = addProduct;
+    vm.getUserGroups = getUserGroups;
+    vm.getUsers = getUsers;
+    vm.getCategories = getCategories;
+    vm.getPriceSchedules = getPriceSchedules;
 
 
     function deleteProduct(productID) {
@@ -40,40 +44,53 @@ function ProductListController(Categories, Products) {
             })
     }
 
+    function modifyProductAssignments(assignments) {
+        if (assignments.category) {
+            //create category assignment
+        }
+        if (assignments.userGroup) {
+            //create userGroup assignment
+        }
+        if (assignments.user) {
+            //create userGroup assignment
+        }
+        if (assignment.priceSchedule) {
+            //create priceSchedule assignment
+        }
+    }
+
 
     function getCategoryProducts() {
 
-        Products.GetCategoryProducts(vm.buyerID, vm.categoryID)
+        Products.GetProductList(vm.buyerID, vm.categoryID)
             .then(function(data) {
                 vm.products = data;
             })
     }
 
-    /*function getCategoryProducts(buyerID, categoryID, page, pageSize) {
-        var dfd = $q.defer();
-        var products = [];
-        if (!categoryID) {
-            Products.List()
-        }
 
-        Categories.ListProductAssignments(buyerID, categoryID, null, page, pageSize)
-                .then(function(data) {
-                    if (data.Items.length == 0) {
-                        dfd.reject();
-                    } else {
-                        var items = data.Items;
-                        for (var i = 0; i < items.length; i++) {
-                            Products.Get(items[i].ProductID)
-                                .then(function (prodData) {
-                                    products.push(prodData);
-                                    if (products.length == items.length) {
-                                        dfd.resolve(products);
-                                    }
-                                }, function(reason) {
-                                    dfd.reject(reason);
-                                })
-                        }
-                    }
-                });
-    }*/
+    function getUserGroups(userGroup) {
+        return UserGroups.List(vm.buyerID, userGroup, 1, 20)
+            .then(function(data){
+                return data.Items;
+            })
+    }
+
+    function getUsers(user) {
+        return Users.List(vm.buyerID, user, 1, 20)
+            .then(function(data){
+                return data.Items;
+            })
+    }
+
+    function getCategories(category) {
+        return Categories.List(vm.buyerID, category, 1, 20)
+            .then(function(data){
+                return data.Items;
+            })
+    }
+
+    function getPriceSchedules(priceSchedule) {
+        // no PriceSchedule search function
+    }
 }
