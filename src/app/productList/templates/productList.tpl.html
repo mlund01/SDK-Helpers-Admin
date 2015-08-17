@@ -50,83 +50,9 @@
             </div>
             <div class="well" ng-show="product.showForm">
                 <h3>Enter Changes Where Necessary</h3>
-                <form ng-submit="productList.modifyProduct(product, productMod)">
-                    <div class="form-group">
-                        <label>Product Name</label>
-                        <input type="text" class="form-control" placeholder="Product Name" ng-model="productMod.Name" />
-                    </div>
-                    <div class="form-group">
-                        <label>Product Description</label>
-                        <input type="text" class="form-control" placeholder="Product Description" ng-model="productMod.Description" />
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="activeSet" value="true" ng-model="productMod.Active" />
-                            Active
-                        </label>
-                    </div>
-                    <div class="radio">
-                        <label>
-                            <input type="radio" name="activeSet" value="false" ng-model="productMod.Active" />
-                            Inactive
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <button class="btn btn-success" type="submit">Submit Modifications</button>
-                    </div>
-                </form>
-                <h3>Set Assignments Down Below</h3>
-                <form ng-submit="productList.modifyProductAssignment(product, productAssignment)">
-                    <div class="form-group">
-                        <label>Category</label>
-                        <input type="text" ng-model="productList.Category"
-                               placeholder="Category"
-                               typeahead="category as category.Name for category in productList.getCategories($viewValue)"
-                               typeahead-loading="loadingCategory"
-                               typeahead-min-length="3"
-                               typeahead-template-url="productList/templates/productPageSearchTemplate.tpl.html"
-                               typeahead-no-results="noResults"
+                <settings product="product" action="modify"></settings>
+                <assignments focus="products" target="categories" object="product"></assignments>
 
-                               class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>User Group</label>
-                        <input type="text" ng-model="productList.UserGroup"
-                               placeholder="User Group"
-                               typeahead="userGroup as userGroup.Name for userGroup in productList.getUserGroups($viewValue)"
-                               typeahead-loading="loadingUserGroups"
-                               typeahead-min-length="3"
-                               typeahead-template-url="productList/templates/productPageSearchTemplate.tpl.html"
-                               typeahead-no-results="noResults"
-                               class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>User</label>
-                        <input type="text"
-                               ng-model="productAssignment.User"
-                               placeholder="User Group"
-                               typeahead="user as user.Name for user in productList.getUsers($viewValue)"
-                               typeahead-loading="loadingUsers"
-                               typeahead-min-length="3"
-                               typeahead-template-url="productList/templates/productPageSearchTemplate.tpl.html"
-                               typeahead-no-results="noResults"
-                               class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label>Price Schedule</label>
-                        <input type="text"
-                               ng-model="productAssignment.PriceSchedule"
-                               placeholder="Price Schedule"
-                               typeahead="priceSchedule as priceSchedule.Name for priceSchedule in productList.getPriceSchedules($viewValue)"
-                               typeahead-loading="loadingProducts"
-                               typeahead-min-length="3"
-                               typeahead-template-url="productList/templates/productPageSearchTemplate.tpl.html"
-                               typeahead-no-results="noResults" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-success">Create Assignments</button>
-                    </div>
-                </form>
             </div>
         </li>
     </ul>

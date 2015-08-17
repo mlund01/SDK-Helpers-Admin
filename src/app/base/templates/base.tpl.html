@@ -12,12 +12,20 @@
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
-		<div class="navbar-collapse" collapse="mainCollapsed" id="bs-example-navbar-collapse-1">
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li ui-sref-active="active"><a ui-sref="base.home"><i class="fa fa-home"></i> Home</a></li>
-			</ul>
-			<ul class="nav navbar-nav">
-				<li ui-sref-active="active"><a ui-sref="base.productList"><i class="fa fa-cogs"></i> Product Admin</a></li>
+				<li dropdown on-toggle="toggled(open)">
+					<a href id="simple-dropdown" dropdown-toggle>
+						Admin<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" aria-labelledby="simple-dropdown">
+						<li><a ui-sref="base.productList">Products</a></li>
+						<li><a ui-sref="base.categoryAdmin">Categories</a></li>
+						<li><a ui-sref="base.priceScheduleAdmin">Price Schedules</a></li>
+						<li><a ui-sref="base.userAdmin">Users & Groups</a></li>
+					</ul>
+				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li><a href="" ng-click="application.logout()"><i class="fa fa-power-off"></i> Logout</a></li>

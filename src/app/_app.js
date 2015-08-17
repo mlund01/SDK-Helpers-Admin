@@ -7,7 +7,9 @@ angular.module( 'orderCloud', [
 	'ui.router',
 	'ui.bootstrap',
 	'orderCloud.sdk',
-	'orderCloud.productList'
+	'orderCloud.productList',
+	'orderCloud.assignments',
+	'orderCloud.settings'
 ])
 
 	.run( Security )
@@ -69,10 +71,11 @@ function ErrorHandling( $provide ) {
 	}
 }
 
-function AppCtrl( $state, Credentials ) {
+function AppCtrl( $state, Credentials, $rootScope ) {
 	var vm = this;
 	vm.logout = function() {
 		Credentials.Delete();
 		$state.go('login');
-	}
+	};
+	$rootScope.buyerID = 'nghelper1';
 }

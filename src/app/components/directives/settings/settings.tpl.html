@@ -1,0 +1,25 @@
+<form ng-submit="TBD()">
+    <div class="form-group">
+        <label>Product Name</label>
+        <input type="text" class="form-control" placeholder="Product Name" ng-model="productMod.Name" />
+    </div>
+    <div class="form-group">
+        <label>Product Description</label>
+        <input type="text" class="form-control" placeholder="Product Description" ng-model="productMod.Description" />
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="activeSet" value="true" ng-model="productMod.Active" />
+            Active
+        </label>
+    </div>
+    <div class="radio">
+        <label>
+            <input type="radio" name="activeSet" value="false" ng-model="productMod.Active" />
+            Inactive
+        </label>
+    </div>
+    <div class="form-group">
+        <button class="btn btn-success" type="submit">Submit Modifications</button>
+    </div>
+</form>

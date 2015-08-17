@@ -44,19 +44,10 @@ function ProductListController(Categories, Products, UserGroups, Users) {
             })
     }
 
-    function modifyProductAssignments(assignments) {
-        if (assignments.category) {
-            //create category assignment
-        }
-        if (assignments.userGroup) {
-            //create userGroup assignment
-        }
-        if (assignments.user) {
-            //create userGroup assignment
-        }
-        if (assignment.priceSchedule) {
-            //create priceSchedule assignment
-        }
+    function addProductToCategory(product, category) {
+        Categories.SaveProductAssignments(vm.buyerID, {CategoryID: category.ID, ProductID: product.ID})
+            .then(function(data) {
+            })
     }
 
 
