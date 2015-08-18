@@ -1,13 +1,15 @@
 angular.module('orderCloud.sdk')
-    .config(ProductsDecorator);
+    .config(ProductsDecorator)
+    .service('ProductsHelper', ProductsHelperService);
 
 function ProductsDecorator($provide) {
-    $provide.decorator('Products', function ($delegate, $q, Categories, Underscore) {
+    $provide.decorator('Products', function ($delegate, $q, ProductsHelper, Underscore) {
 
         //Predefined Service Functions to be used in decorator
-        var GetFn = $delegate.Get;
-        var ListFn = $delegate.List;
-        var ListProductAssignmentsFn = $delegate.ListProductAssignments;
+        var Products = $delegate;
+
+        $delegate.GetProductList = _GetProductList;
+        $delegate.GetProductUsers = _GetProductUsers;
 
 
         function GetCategoryProductIDs(buyerID, categoryID) {
@@ -15,10 +17,10 @@ function ProductsDecorator($provide) {
             var productIDs = [];
 
             if (!categoryID) {
-                ListFn()
+                Products.List()
                     .then(function(data) {dfd.resolve(data)}, function(reason) {dfd.reject(reason)})
             } else {
-                Categories.ListProductAssignments(buyerID, categoryID, null, 1, 20) //Collects Meta Data
+                ProductsHelper.Categories_ListProductAssignments(buyerID, categoryID, null, 1, 20) //Collects Meta Data
                     .then(function(data) {
                         var pageCount = data.Meta.TotalPages;
                         var productCount = data.Meta.TotalCount;
@@ -33,7 +35,7 @@ function ProductsDecorator($provide) {
                             });
                             if (pageCount > 1) {
                                 for (var i = 2; i <= pageCount; i++) {
-                                    Categories.ListProductAssignments(buyerID, categoryID, null, i, 20) //grabs product Assignments
+                                    ProductsHelper.Categories_ListProductAssignments(buyerID, categoryID, null, i, 20) //grabs product Assignments
                                         .then(function (data) {
                                             data.Items.forEach(function (each) {
                                                 productIDs.push(each.ProductID);
@@ -56,7 +58,7 @@ function ProductsDecorator($provide) {
             if (!standardPriceScheduleID && !replenishmentPriceScheduleID && !userID && !groupID && !level) {
                 dfd.resolve({ignore: true})
             } else {
-                ListProductAssignmentsFn(buyerID, null, standardPriceScheduleID, replenishmentPriceScheduleID, userID, groupID, level, 1, 20)
+                Products.ListProductAssignments(buyerID, null, standardPriceScheduleID, replenishmentPriceScheduleID, userID, groupID, level, 1, 20)
                     .then(function(data) {
                         var pageCount = data.Meta.TotalPages;
                         var productCount = data.Meta.TotalCount;
@@ -71,7 +73,7 @@ function ProductsDecorator($provide) {
                             });
                             if (pageCount > 1) {
                                 for (var i = 2; i <= pageCount; i++) {
-                                    ListProductAssignmentsFn(buyerID, null, standardPriceScheduleID, replenishmentPriceScheduleID, userID, groupID, level, i, 20)
+                                    Products.ListProductAssignments(buyerID, null, standardPriceScheduleID, replenishmentPriceScheduleID, userID, groupID, level, i, 20)
                                         .then(function(data) {
                                             data.Items.forEach(function(each) {
                                                 productIDs.push(each.ProductID);
@@ -89,11 +91,11 @@ function ProductsDecorator($provide) {
         }
 
 
-        $delegate.GetProductList = function(buyerID, categoryID, userGroupID, userID, standardPriceScheduleID, replenishmentPriceScheduleID, level) {
+        function _GetProductList(buyerID, categoryID, userGroupID, userID, standardPriceScheduleID, replenishmentPriceScheduleID, level) {
             var dfd = $q.defer();
             var products = [];
             if (!categoryID) {
-                ListFn()
+                Products.List()
                     .then(function(data) {dfd.resolve(data)}, function(reason) {dfd.reject(reason)})
             } else {
                 $q.all([
@@ -111,7 +113,7 @@ function ProductsDecorator($provide) {
                             if (each == productListIDs.slice(-1)[0]) {
                                 lastProd = true;
                             }
-                            GetFn(each)
+                            Products.Get(each)
                                 .then(function(data) {
                                     products.push(data);
                                     if (lastProd) {
@@ -123,13 +125,59 @@ function ProductsDecorator($provide) {
             }
             return dfd.promise;
 
-        };
+        }
+
+        function _GetProductUsers(buyerID, productID) {
+            var dfd = $q.defer();
+            var productUsers = [];
+            Products.ListProductAssignments(buyerID, productID, null, null, null, null, null, 1, 20)
+                .then(function(data) {
+                    var pages = data.Meta.TotalPages;
+                    var totalCount = data.Meta.TotalCount;
+                    data.Items.forEach(function(data) {
+                        var user = data.UserID;
+                        ProductsHelper.Users_Get(buyerID, user)
+                            .then(function(data) {
+                                productUsers.push(data);
+                                if (productUsers.length == totalCount) {
+                                    dfd.resolve(productUsers);
+                                }
+                            }, function(response) {dfd.reject(response)})
+                    });
+                    if (pages > 1) {
+                        for (var i = 2; i <= pages; i++) {
+                            Products.ListProductAssignments(buyerID, productID, null, null, null, null, null, i, 20)
+                                .then(function(data) {
+                                    data.Items.forEach(function(data) {
+                                        var user = data.UserID;
+                                        ProductsHelper.Users_Get(buyerID, user)
+                                            .then(function(data) {
+                                                productUsers.push(data);
+                                                if (productUsers.length == totalCount) {
+                                                    dfd.resolve(productUsers);
+                                                }
+                                            })
+                                    });
+                                }, function(response) {dfd.reject(response)})
+                        }
+                    }
+                });
 
 
-
+            return dfd.promise;
+        }
 
 
         return $delegate;
 
     })
+}
+
+function ProductsHelperService(Categories, Users) { /*This is a necessary function to protect from Circular Dependency Injection*/
+    
+
+    return {
+        Categories_ListProductAssignments: Categories.ListProductAssignments,
+        Users_Get: Users.Get
+    }
 }

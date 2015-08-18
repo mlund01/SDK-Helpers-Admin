@@ -94,9 +94,11 @@ gulp.task('b_c:assets', function() {
         '!' + config.build + '**/*.css',
         '!' + config.build + '**/*.less',
         '!' + config.build + '**/*.scss',
-        '!' + config.build + '**/*.sass'], {read:false})
+        '!' + config.build + '**/*.sass',
+        '!' + config.build + 'assets/fonts/**/*'], {read:false})
         .pipe(clean())
 });
+
 
 /*COMPILE*/
 gulp.task('c_m:css', function() {

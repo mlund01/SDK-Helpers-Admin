@@ -1,0 +1,16 @@
+<div class="tag">
+    <span class="tag-name" style="background-color:{{chips.backColor}}">
+        <span dropdown on-toggle="toggled(open)" >
+            <a href id="simple-dropdown" dropdown-toggle><i class="fa fa-chevron-down"></i>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="simple-dropdown">
+                <li><a ui-sref="#">Buyer Assignments</a></li>
+                <li><a ui-sref="#">Group Assignments</a></li>
+                <li><a ui-sref="#">User Assignments</a></li>
+                <li><a ui-sref="#">Category Hierarchy</a></li>
+            </ul>
+        </span>
+        {{chips.object.Name}}
+        <a><i class="fa fa-times-circle fa-2x"></i></a>
+    </span>
+</div>

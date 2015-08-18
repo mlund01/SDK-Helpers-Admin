@@ -9,7 +9,9 @@ angular.module( 'orderCloud', [
 	'orderCloud.sdk',
 	'orderCloud.productList',
 	'orderCloud.assignments',
-	'orderCloud.settings'
+	'orderCloud.settings',
+	'orderCloud.chips',
+	'orderCloud.pallet'
 ])
 
 	.run( Security )

@@ -51,3 +51,5 @@ gulp.task('compile', gulp.series(
     'build',
     gulp.parallel('compile:js', 'compile:assets', 'compile:css'),
     'compile:inject'));
+
+gulp.task('default', gulp.series('compile'));
