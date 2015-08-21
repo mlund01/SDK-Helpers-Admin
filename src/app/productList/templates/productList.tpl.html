@@ -1,6 +1,6 @@
-<div class="container product-list">
-    <h1 class="page-header">Manage Products</h1>
-    <button class="btn btn-block btn-info" ng-init="productList.showAdd = false" ng-click="productList.showAdd = !productList.showAdd">Add Product</button>
+<div class="container product-list oc-container">
+
+    <!--<button class="btn btn-block btn-info" ng-init="productList.showAdd = false" ng-click="productList.showAdd = !productList.showAdd">Add Product</button>
     <div class="well" ng-show="productList.showAdd">
         <form ng-submit="productList.addProduct(product)">
             <div class="form-group">
@@ -27,33 +27,52 @@
                 <button class="btn btn-success" type="submit">Create New Product</button>
             </div>
         </form>
-    </div>
-    <ul class="list-group">
-        <li class="list-group-item" ng-repeat="product in productList.products">
-            <div class="media">
-                <div class="media-left">
-                    <a href="">
-                        <img class="media-object" src="http://placekitten.com/g/500/500">
-                    </a>
+    </div>-->
+    <div class="oc-list">
+        <div class="oc-list-head">
+            <h2>PRODUCT</h2>
+        </div>
+        <ul class="list-group oc-list-group">
+            <li class="list-group-item oc-list-item" ng-repeat="product in productList.products">
+                <div class="media">
+                    <div class="media-left">
+                        <a href="">
+                            <img class="media-object" src="http://placekitten.com/g/500/500">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">{{product.Name}}</h4>
+                        <p>{{product.Description}}</p>
+                        <span>Type: {{product.Type}}</span>
+                        <span>ID: {{product.ID}}</span>
+                        <span>Active: {{product.Active}}</span>
+                    </div>
+                    <div class="media-right">
+                        <button ng-init="product.showForm = false" class="btn btn-default" ng-click="product.showForm = !product.showForm">Modify</button>
+                        <button class="btn btn-danger" ng-click="productList.deleteProduct(product.ID)">Delete</button>
+                    </div>
                 </div>
-                <div class="media-body">
-                    <h4 class="media-heading">{{product.Name}}</h4>
-                    <p>{{product.Description}}</p>
-                    <span>Type: {{product.Type}}</span>
-                    <span>ID: {{product.ID}}</span>
-                    <span>Active: {{product.Active}}</span>
+                <div class="flat-box" ng-show="product.showForm">
+                    <div class="flat-box-heading">
+                        <div ng-click="product.showSettings = true; product.showProdCatAssignments = false; product.showProdPSAssignments = false;" class="flat-box-title" ng-class="{active: product.showSettings}">
+                            SETTINGS
+                        </div>
+                        <div ng-click="product.showSettings = false; product.showProdCatAssignments = true; product.showProdPSAssignments = false;" class="flat-box-title" ng-class="{active: product.showProdCatAssignments}">
+                            CATEGORIES
+                        </div>
+                        <div ng-click="product.showSettings = false; product.showProdCatAssignments = false; product.showProdPSAssignments = true;" class="flat-box-title" ng-class="{active: product.showProdPSAssignments}">
+                            PRICE SCHEDULES
+                        </div>
+                    </div>
+                    <div class="flat-box-content">
+                        <settings ng-show=product.showSettings product="product" action="modify"></settings>
+                        <assignments ng-show="product.showProdCatAssignments" focus="products" object="product" target="categories"></assignments>
+                        <assignments ng-show="product.showProdPSAssignments" focus="products" object="product" target="priceSchedules"></assignments>
+                    </div>
                 </div>
-                <div class="media-right">
-                    <button ng-init="product.showForm = false" class="btn btn-default" ng-click="product.showForm = !product.showForm">Modify</button>
-                    <button class="btn btn-danger" ng-click="productList.deleteProduct(product.ID)">Delete</button>
-                </div>
-            </div>
-            <div class="well" ng-show="product.showForm">
-                <h3>Enter Changes Where Necessary</h3>
-                <settings product="product" action="modify"></settings>
-                <assignments focus="products" object="product"></assignments>
 
-            </div>
-        </li>
-    </ul>
+            </li>
+        </ul>
+    </div>
+
 </div>

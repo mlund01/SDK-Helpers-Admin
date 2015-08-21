@@ -16,5 +16,8 @@
     "ordercloud-angular-sdk": "~0.6.6",
     "bootstrap": "~3.3.5",
     "angular-bootstrap": "~0.13.2"
+  },
+  "resolutions": {
+    "angular": "1.4.4"
   }
 }

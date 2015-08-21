@@ -1,16 +1,16 @@
 <h1>Assignments</h1>
 
 <!--PRODUCT FOCUS-->
-<div ng-if="assignments.focus == 'products' && assignments.target == 'categories' || assignments.target == null">
+<div class="well oc-well" ng-if="assignments.focus == 'products' && assignments.target == 'categories' || assignments.target == null">
     <h4>Categories with this product...</h4>
     <div class="tag-group">
-        <chips ng-repeat="category in assignments.categoryList" focus="categories" object="category" pallet="blueGreen"></chips>
+        <chips ng-repeat="category in assignments.categoryList" focus="categories" object="category"></chips>
     </div>
 
-    <form ng-submit="TBD()">
+    <form ng-submit="assignments.assignProductToCategory(newCategory, object, assignments.updateCategoryAssignments)">
         <div class="form-group">
             <input type="text"
-                   ng-model="product.newCategory"
+                   ng-model="newCategory"
                    placeholder="Category"
                    typeahead="category as category.Name for category in assignments.searchCategories($viewValue)"
                    typeahead-loading="loadingCategory"
@@ -25,7 +25,7 @@
     </form>
 </div>
 
-<div ng-if="assignments.focus == 'products' && assignments.target == 'priceSchedules' || assignments.target == null">
+<div class="well oc-well" ng-if="assignments.focus == 'products' && assignments.target == 'priceSchedules' || assignments.target == null">
 
     <h4>Assigned Price Schedules</h4>
     <!--TODO: Add List of current Price Schedules assigned to Product with assignments listed out-->
@@ -41,17 +41,8 @@
                    placeholder="Enter Price Schedule ID"
                    class="form-control" />
         </div>
-    </form>
-    <!--TODO: Create 'assignNewPriceSchedule' function for price schedule assignment-->
-    <form ng-submit="assignments.assignNewPriceSchedule(product.newPS, object.ID, priceSchedule.user, priceSchedule.userGroup, priceSchedule.buyer)" ng-show="assignments.useNewPS">
         <div class="form-group">
-            <label>New Price Schedule</label>
-            <input type="text"
-                   ng-model="product.newPS"
-                   placeholder="Enter Price Schedule ID"
-                   class="form-control" />
-        </div>
-        <div class="form-group">
+            <label>Users</label>
             <input type="text"
                    ng-model="priceSchedule.user"
                    placeholder="Leave Blank if None"
@@ -64,6 +55,7 @@
         </div>
         <!--TODO: add 'searchUserGroups' function-->
         <div class="form-group">
+            <label>User Groups</label>
             <input type="text"
                    ng-model="priceSchedule.userGroup"
                    placeholder="Leave Blank if None"
@@ -74,9 +66,41 @@
                    typeahead-no-results="noResults"
                    class="form-control" />
         </div>
+    </form>
 
+    <!--TODO: Create 'assignNewPriceSchedule' function for price schedule assignment-->
+    <form ng-submit="assignments.assignNewPriceSchedule(product.newPS, object.ID, priceSchedule.user, priceSchedule.userGroup, priceSchedule.buyer)" ng-show="assignments.useNewPS">
         <div class="form-group">
-            <button type="submit" class="btn btn-success">Assign Product to User</button>
+            <label>New Price Schedule</label>
+            <input type="text"
+                   ng-model="product.newPS"
+                   placeholder="Enter Price Schedule ID"
+                   class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Users</label>
+            <input type="text"
+                   ng-model="priceSchedule.user"
+                   placeholder="Leave Blank if None"
+                   typeahead="user as user.FirstName for user in assignments.searchUsers($viewValue)"
+                   typeahead-loading="loadingUser"
+                   typeahead-min-length="2"
+                   typeahead-template-url="components/directives/assignments/userSearchTemplate.tpl.html"
+                   typeahead-no-results="noResults"
+                   class="form-control" />
+        </div>
+        <!--TODO: add 'searchUserGroups' function-->
+        <div class="form-group">
+            <label>User Groups</label>
+            <input type="text"
+                   ng-model="priceSchedule.userGroup"
+                   placeholder="Leave Blank if None"
+                   typeahead="userGroup as userGroup.Name for user in assignments.searchUserGroups($viewValue)"
+                   typeahead-loading="loadingUser"
+                   typeahead-min-length="2"
+                   typeahead-template-url="components/directives/assignments/userSearchTemplate.tpl.html"
+                   typeahead-no-results="noResults"
+                   class="form-control" />
         </div>
     </form>
 </div>

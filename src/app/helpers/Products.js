@@ -1,9 +1,8 @@
 angular.module('orderCloud.sdk')
     .config(ProductsDecorator)
-    .service('ProductsHelper', ProductsHelperService);
 
 function ProductsDecorator($provide) {
-    $provide.decorator('Products', function ($delegate, $q, ProductsHelper, Underscore) {
+    $provide.decorator('Products', function ($delegate, $q, Underscore) {
 
         //Predefined Service Functions to be used in decorator
         var Products = $delegate;
@@ -20,7 +19,7 @@ function ProductsDecorator($provide) {
                 Products.List()
                     .then(function(data) {dfd.resolve(data)}, function(reason) {dfd.reject(reason)})
             } else {
-                ProductsHelper.Categories_ListProductAssignments(buyerID, categoryID, null, 1, 20) //Collects Meta Data
+                Categories_ListProductAssignments(buyerID, categoryID, null, 1, 20) //Collects Meta Data
                     .then(function(data) {
                         var pageCount = data.Meta.TotalPages;
                         var productCount = data.Meta.TotalCount;
@@ -35,7 +34,7 @@ function ProductsDecorator($provide) {
                             });
                             if (pageCount > 1) {
                                 for (var i = 2; i <= pageCount; i++) {
-                                    ProductsHelper.Categories_ListProductAssignments(buyerID, categoryID, null, i, 20) //grabs product Assignments
+                                    Categories_ListProductAssignments(buyerID, categoryID, null, i, 20) //grabs product Assignments
                                         .then(function (data) {
                                             data.Items.forEach(function (each) {
                                                 productIDs.push(each.ProductID);
@@ -136,7 +135,7 @@ function ProductsDecorator($provide) {
                     var totalCount = data.Meta.TotalCount;
                     data.Items.forEach(function(data) {
                         var user = data.UserID;
-                        ProductsHelper.Users_Get(buyerID, user)
+                        Users_Get(buyerID, user)
                             .then(function(data) {
                                 productUsers.push(data);
                                 if (productUsers.length == totalCount) {
@@ -150,7 +149,7 @@ function ProductsDecorator($provide) {
                                 .then(function(data) {
                                     data.Items.forEach(function(data) {
                                         var user = data.UserID;
-                                        ProductsHelper.Users_Get(buyerID, user)
+                                        Users_Get(buyerID, user)
                                             .then(function(data) {
                                                 productUsers.push(data);
                                                 if (productUsers.length == totalCount) {
@@ -171,13 +170,4 @@ function ProductsDecorator($provide) {
         return $delegate;
 
     })
-}
-
-function ProductsHelperService(Categories, Users) { /*This is a necessary function to protect from Circular Dependency Injection*/
-    
-
-    return {
-        Categories_ListProductAssignments: Categories.ListProductAssignments,
-        Users_Get: Users.Get
-    }
 }

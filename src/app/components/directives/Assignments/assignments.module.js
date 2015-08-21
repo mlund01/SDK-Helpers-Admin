@@ -3,21 +3,25 @@ angular.module('orderCloud.assignments', [])
     .directive('assignments', AssignmentsDirective);
 
 
-function AssignmentsController($scope, $rootScope, Categories, Products, AssignmentsSvc) {
+function AssignmentsController($scope, $rootScope, Categories, Products, AssignmentsSvc, Underscore) {
     var vm = this;
     vm.focus = $scope.focus;
     vm.object = $scope.object;
     vm.target = $scope.target;
     vm.action = $scope.action;
+    vm.categoryList = [];
     vm.searchUsers = AssignmentsSvc.searchUsers;
+    vm.searchCategories = AssignmentsSvc.searchCategories;
     vm.assignUserToProduct = assignUserToProduct;
     vm.useExistingPS = false;
     vm.useNewPS = true;
     vm.showExistingPS = showExistingPS;
     vm.showNewPS = showNewPS;
+    vm.assignProductToCategory = AssignmentsSvc.assignProductToCategory;
+    vm.updateCategoryAssignments = updateCategoryAssignments;
 
     if (vm.focus == 'products' && vm.target == 'categories' || vm.target == null) {
-        updateUserAssignments();
+        updateCategoryAssignments();
     }
     if (vm.focus == 'products' && vm.target == 'users' || vm.target == null) {
         updateProductUsers();
@@ -34,10 +38,29 @@ function AssignmentsController($scope, $rootScope, Categories, Products, Assignm
                 updateProductUsers();
             })
     }
-    function updateUserAssignments() {
+    function updateCategoryAssignments() {
         Categories.GetProductCategories($rootScope.buyerID, vm.object.ID)
             .then(function(data) {
-                vm.categoryList = data;
+                //checks if each return item from data exists in array... pushes to end if not
+                for (var i = 0; i < data.length; i++) {
+                    console.log('hit first');
+                    for (var b = 0; b < vm.categoryList.length; b++) {
+                        console.log('hit second');
+                        if (data[i].Name == vm.categoryList[b].Name) {
+                            console.log('hit break');
+                            break;
+                        } else {
+                            if (b == vm.categoryList.length - 1) {
+                                console.log('hit push');
+                                vm.categoryList.push(data[b])
+                            }
+                        }
+                    }
+                    if (vm.categoryList.length == 0) {
+                        vm.categoryList = data;
+                    }
+                }
+
             })
     }
 

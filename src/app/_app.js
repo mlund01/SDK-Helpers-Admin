@@ -11,7 +11,8 @@ angular.module( 'orderCloud', [
 	'orderCloud.assignments',
 	'orderCloud.settings',
 	'orderCloud.chips',
-	'orderCloud.pallet'
+	'orderCloud.pallet',
+	'orderCloud.test',
 ])
 
 	.run( Security )

@@ -17,8 +17,27 @@ function AssignmentsService($rootScope, Products, Categories, Users, UserGroups,
             })
     }
 
+    function _assignProductToCategory(category, product, cb) {
+        console.log('hit button');
+        if (typeof category == 'object') {
+            var assignment = {
+                CategoryID: category.ID,
+                ProductID: product.ID
+            };
+            Categories.SaveProductAssignments($rootScope.buyerID, assignment)
+                .then(function(data) {
+                    cb();
+                })
+        } else {
+            return null;
+        }
+
+
+    }
+
     return {
         searchUsers: _searchUsers,
-        searchCategories: _searchCategories
+        searchCategories: _searchCategories,
+        assignProductToCategory: _assignProductToCategory
     }
 }

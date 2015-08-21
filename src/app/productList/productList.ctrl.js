@@ -14,6 +14,28 @@ function ProductListController(Categories, Products, UserGroups, Users) {
     vm.getCategories = getCategories;
     vm.getPriceSchedules = getPriceSchedules;
 
+    vm.turnOn = function(focus) {
+        switch(focus) {
+            case 'settings':
+                vm.showSettings = true;
+                vm.showProdCatAssignments = false;
+                vm.showProdPSAssignments = false;
+                break;
+            case 'categories':
+                vm.showSettings = false;
+                vm.showProdCatAssignments = true;
+                vm.showProdPSAssignments = false;
+                break;
+            case 'priceSchedules':
+                vm.showSettings = false;
+                vm.showProdCatAssignments = false;
+                vm.showProdPSAssignments = true;
+                break;
+            default:
+                break;
+        }
+    };
+
 
     function deleteProduct(productID) {
         Products.Delete(productID)
