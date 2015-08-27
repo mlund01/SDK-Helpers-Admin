@@ -15,7 +15,8 @@
     "font-awesome": "~4.3.0",
     "ordercloud-angular-sdk": "~0.6.6",
     "bootstrap": "~3.3.5",
-    "angular-bootstrap": "~0.13.2"
+    "angular-bootstrap": "~0.13.2",
+    "oc-angular-sdk-extensions": "*"
   },
   "resolutions": {
     "angular": "1.4.4"

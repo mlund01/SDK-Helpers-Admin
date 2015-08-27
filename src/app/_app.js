@@ -12,7 +12,7 @@ angular.module( 'orderCloud', [
 	'orderCloud.settings',
 	'orderCloud.chips',
 	'orderCloud.pallet',
-	'orderCloud.test',
+	'orderCloud.test'
 ])
 
 	.run( Security )

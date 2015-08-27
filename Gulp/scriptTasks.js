@@ -73,7 +73,7 @@ gulp.task('c_m:js', function() {
             config.build + 'src/**/*.js',
             '!' + config.build + 'src/**/*.spec.js'])
         .pipe(concat('app.js'))
-        /*.pipe(uglify({}))*/
+        .pipe(uglify({mangle:true}))
         //TODO: gulp-header doesn't work with gulp-4.0
         //.pipe(header(banner, {pkg: pkg}))
         .pipe(gulp.dest(config.compile + 'assets'));

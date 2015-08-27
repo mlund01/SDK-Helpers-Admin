@@ -70,9 +70,21 @@ function TestController(Categories, $rootScope) {
         if (vm.categories.response6) {
             delete vm.categories.response6
         } else {
-            Categories.GetCategoryTree($rootScope.buyerID, null, 'user1', null)
+            Categories.GetCategoryTree($rootScope.buyerID, null, null, null, 'Cat5', true)
                 .then(function(data) {
                     vm.categories.response6 = data;
+                })
+        }
+
+    };
+
+    vm.categories7 = function() {
+        if (vm.categories.response7) {
+            delete vm.categories.response7
+        } else {
+            Categories.GetCategoryTree($rootScope.buyerID, null, null, null, null, true)
+                .then(function(data) {
+                    vm.categories.response7 = data;
                 })
         }
 

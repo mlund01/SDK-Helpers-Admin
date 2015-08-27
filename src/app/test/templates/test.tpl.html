@@ -40,10 +40,18 @@
         </pre>
     </div>
     <div class="well">
-        <button class="btn btn-primary" ng-click="test.categories6()">List All Categories</button><br/>
+        <button class="btn btn-primary" ng-click="test.categories6()">Show Category Tree</button><br/>
         <pre ng-show="test.categories.response6">
             <code>
                 {{test.categories.response6 | json}}
+            </code>
+        </pre>
+    </div>
+    <div class="well">
+        <button class="btn btn-primary" ng-click="test.categories7()">Show Category Tree with Products</button><br/>
+        <pre ng-show="test.categories.response7">
+            <code>
+                {{test.categories.response7 | json}}
             </code>
         </pre>
     </div>

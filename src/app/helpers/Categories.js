@@ -15,7 +15,6 @@ function CategoriesDecorator($provide) {
         Categories.ListAssignmentsVerbose = ListAssignmentsVerbose;
         Categories.ListAllAssignmentsVerbose = ListAllAssignmentsVerbose;
         Categories.GetCategoryTree = GetCategoryTree;
-        Categories.GetCatalogTree = GetCatalogTree;
 
         function ListProductAssignmentsVerbose(buyerID, categoryID, productID, page, pageSize) { //returns list of categories assigned to productID in params
             var dfd = $q.defer(),
@@ -42,6 +41,7 @@ function CategoriesDecorator($provide) {
                             tempObject.Product = _data[0];
                             tempObject.Category = _data[1];
                             returnList.push(tempObject);
+                            tempObject = {};
                             if (returnList.length == totalCount || returnList.length == pSize) {
                                 returnObject.Items = returnList;
                                 dfd.resolve(returnObject);
@@ -133,6 +133,7 @@ function CategoriesDecorator($provide) {
             }
             return dfd.promise;
         }
+
 
         function ListAssignmentsVerbose(buyerID, userGroupID, userID, level, categoryID, page , pageSize) {
             var dfd = $q.defer();
@@ -263,11 +264,10 @@ function CategoriesDecorator($provide) {
         }
 
 
-        function GetCategoryTree(buyerID, userGroupID, userID, level, parentCategoryID) {
+        function GetCategoryTree(buyerID, userGroupID, userID, level, parentCategoryID, showProducts) {
             var dfd = $q.defer();
             var parentList = [];
             var returnList = [];
-            var filteredList = [];
 
             Categories.ListAll(buyerID)
                 .then(function(data) {
@@ -278,14 +278,17 @@ function CategoriesDecorator($provide) {
                     });
 
                     function buildTree(parent) {
-                        parent.children = [];
+                        if (showProducts) {
+                            parent.Products = [];
+                        }
+                        parent.Children = [];
                         data.Items.forEach(function(each){
                             if (parent.ID == each.ParentID) {
-                                parent.children.push(each);
+                                parent.Children.push(each);
                             }
                         });
-                        if (parent.children.length > 0) {
-                            parent.children.forEach(function(each) {
+                        if (parent.Children.length > 0) {
+                            parent.Children.forEach(function(each) {
                                 buildTree(each);
                             })
                         }
@@ -296,65 +299,177 @@ function CategoriesDecorator($provide) {
                         returnList.push(each);
                     });
 
-                    var targetCats = [];
-                    if (userGroupID != null || userID != null) {
-                        Categories.ListAllAssignmentsVerbose(buyerID, userGroupID, userID, level)
-                            .then(function(data) {
-                                data.Items.forEach(function(each){
-                                    targetCats.push(each.Category.ID);
-                                });
+                    parentTreeFilter(parentCategoryID, returnList)
+                        .then(function(list) {
+                            treeFilter(buyerID, userGroupID, userID, level, list)
+                                .then(function(list) {
+                                    addProductsToTree(buyerID, showProducts, list)
+                                        .then(function(list) {
+                                            dfd.resolve(list);
+                                        });
 
-                                function scrape(object, parents) {
-                                    parents.push(object.ID);
-                                    console.log(parents);
-                                    if (targetCats.indexOf(object.ID) != -1) {
-                                        filteredList.push(object);
-
-                                    } else {
-                                        if (object.children.length > 0) {
-                                            object.children.forEach(function(each) {
-                                                scrape(each, parents);
-                                            })
-                                        }
-                                    }
-                                }
-
-                                returnList.forEach(function(each) {
-                                    var parents = [];
-                                    scrape(each, parents);
-                                });
-                                dfd.resolve(filteredList);
-
-                            });
-                    } else {
-                        dfd.resolve(returnList);
-                    }
-
+                                })
+                        })
 
                 });
             return dfd.promise;
+        }
 
 
 
-            /*Categories.ListAllAssignmentsVerbose(buyerID, userGroupID, userID)
-                .then(function(data) {
-                    var pages = data.Meta.Pages;
-                    var totalCount = data.Meta.TotalCount;
-                    data.Items.forEach(function(each) {
-                        tempList.push(each);
-                    })
-                    if (pages > 1) {
-                        for (var i = 2; i <= pages; i++) {
-                            Categories.GetCategoryList
+
+
+
+        function addProducts(buyerID, object) {
+            var dfd = $q.defer();
+            function loopTree(obj) {
+                var nodeCount = countNodes(obj);
+                var count = 0;
+                Categories.ListAllProductAssignmentsVerbose(buyerID, obj.ID)
+                    .then(function(data) {
+                        count++;
+
+                        if (data.Items.length > 0) {
+                            data.Items.forEach(function(each) {
+                                obj.Products.push(each.Product);
+                            })
                         }
-                    }
-                })*/
+                        if (count == nodeCount) {
+                            dfd.resolve(object);
+                        }
+                    }, function(reason) {dfd.reject(reason)});
+                if (obj.Children.length > 0) {
+                    obj.Children.forEach(function(each) {
+                        loopTree(each);
+                    })
+                }
+
+            }
+
+            loopTree(object);
+            return dfd.promise;
         }
 
-        function GetCatalogTree(buyerID, groupID, userID) {
+        function addProductsToTree(buyerID, showProducts, list) {
+            var dfd = $q.defer();
+            var parentNodeCount = list.length;
+            var count = 0;
+            var outputList = [];
+            if (showProducts == true) {
+                list.forEach(function(eachObj) {
+                    addProducts(buyerID, eachObj)
+                        .then(function(data) {
+                            count++;
+                            outputList.push(data);
+                            if (count == parentNodeCount) {
+                                dfd.resolve(list);
+                            }
+                        })
+                });
+            } else {
+                dfd.resolve(list);
+            }
+
+
+            return dfd.promise;
 
         }
+
+        function countNodes(treeObject) {
+            var nodeCount = 0;
+
+            function getNodeCount(object){
+                nodeCount++;
+                if (object.Children > 0) {
+                    object.Children.forEach(function(each) {
+                        getNodeCount(each)
+                    })
+                }
+            }
+
+            getNodeCount(treeObject);
+            return nodeCount;
+
+        }
+
+        function treeFilter(buyerID, userGroupID, userID, level, list) {
+            var dfd = $q.defer();
+            if (userGroupID || userID) {
+                var filteredList = [];
+                var targetCats = [];
+                Categories.ListAllAssignmentsVerbose(buyerID, userGroupID, userID, level)
+                    .then(function(data) {
+                        data.Items.forEach(function(each){
+                            targetCats.push(each.Category.ID);
+                        });
+
+                        function filterScrape(object, parents) {
+                            parents.push(object.ID);
+                            if (targetCats.indexOf(object.ID) != -1) {
+                                filteredList.push(object);
+
+                            } else {
+                                if (object.Children.length > 0) {
+                                    object.Children.forEach(function(each) {
+                                        filterScrape(each, parents);
+                                    })
+                                }
+                            }
+                        }
+
+                        list.forEach(function(each) {
+                            var parents = [];
+                            filterScrape(each, parents);
+                        });
+                        dfd.resolve(filteredList);
+
+                    });
+            } else {
+                dfd.resolve(list);
+            }
+            return dfd.promise;
+        }
+
+        function parentTreeFilter(parentID, list) {
+            var dfd = $q.defer();
+            if (parentID) {
+                var filteredParentList = [];
+                closure()
+                    .then(function() {
+                        function parentScrape(object) {
+                            if (object.ID == parentID || parentID.isArray && parentID.indexOf(object.ID) != -1) {
+                                filteredParentList.push(object);
+                            } else {
+                                object.Children.forEach(function(each) {
+                                    parentScrape(each);
+                                })
+                            }
+                        }
+                        list.forEach(function(each) {
+                            parentScrape(each);
+                        });
+                        dfd.resolve(filteredParentList);
+                    })
+
+            } else {
+                dfd.resolve(list);
+            }
+
+            return dfd.promise;
+        }
+
+        function closure() {
+            var dfd = $q.defer();
+            dfd.resolve();
+            return dfd.promise;
+        }
+
 
         return Categories;
     })
 }
+
+
+
+
+
